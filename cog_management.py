@@ -1,10 +1,10 @@
-import typing
-import os
 import enum
+import os
+import typing
 
-import discord
-from discord import app_commands
-from discord.ext import commands
+import disnake
+from disnake import app_commands
+from disnake.ext import commands
 
 __global_cogs = []  # cog list caching
 def get_possible_cogs(refresh=False) -> typing.List[str]:
@@ -35,22 +35,22 @@ class CogAction(enum.Enum):
 
 class EmbedFormatter():
     class EmbedFormat():
-        def __init__(self, head:str, comment:str, emoji:str, log_type:str, color:discord.Color):
+        def __init__(self, head:str, comment:str, emoji:str, log_type:str, color:disnake.Color):
             self.head = head
             self.comment = comment
             self.emoji = emoji
             self.log_type = log_type
             self.color = color
         
-        def to_embed(self) -> discord.Embed:
+        def to_embed(self) -> disnake.Embed:
             print(repr(self))
-            return discord.Embed(
+            return disnake.Embed(
                 description=str(self),
                 color=self.color
             )
         
         def __str__(self):
-            """ Returns formatting for a discord.Embed """
+            """ Returns formatting for a disnake.Embed """
             s = f"\n{self.emoji} **{self.head}**\n"
             if self.comment != "":
                 s += self.comment + '\n'
@@ -64,19 +64,19 @@ class EmbedFormatter():
     
     @classmethod
     def DEBUG(cls, head:str, comment:str="") -> EmbedFormat:
-        return cls.EmbedFormat(head, comment, '🧪', "DBG", discord.Color.blue())
+        return cls.EmbedFormat(head, comment, '🧪', "DBG", disnake.Color.blue())
         
     @classmethod
     def OK(cls, head:str, comment:str="") -> EmbedFormat:
-        return cls.EmbedFormat(head, comment, '✅', "SUC", discord.Color.green())
+        return cls.EmbedFormat(head, comment, '✅', "SUC", disnake.Color.green())
     
     @classmethod
     def WARNING(cls, head:str, comment:str="") -> EmbedFormat:
-        return cls.EmbedFormat(head, comment, '⚠️', "WRN", discord.Color.yellow())
+        return cls.EmbedFormat(head, comment, '⚠️', "WRN", disnake.Color.yellow())
 
     @classmethod
     def ERROR(cls, head:str, comment:str="") -> EmbedFormat:
-        return cls.EmbedFormat(head, comment, '🚫', "ERR", discord.Color.red())
+        return cls.EmbedFormat(head, comment, '🚫', "ERR", disnake.Color.red())
 
 
 class CogManagementCog(commands.Cog):
@@ -84,7 +84,7 @@ class CogManagementCog(commands.Cog):
         self.bot = bot
 
 
-    async def __do_on_single_cog(self, i: discord.Interaction, cog: str, ac: CogAction) -> EmbedFormatter.EmbedFormat:
+    async def __do_on_single_cog(self, i: disnake.Interaction, cog: str, ac: CogAction) -> EmbedFormatter.EmbedFormat:
         if cog not in get_possible_cogs():
             raise commands.ExtensionNotFound(f"The cog `{cog}` was not found!")
         
@@ -119,7 +119,7 @@ class CogManagementCog(commands.Cog):
         else: raise ValueError(f"Unknown action `{ac}`!")
 
 
-    async def __do_on_cog_set(self, i: discord.Interaction, cog: str, ac: CogAction) -> bool:
+    async def __do_on_cog_set(self, i: disnake.Interaction, cog: str, ac: CogAction) -> bool:
         extensions = get_possible_cogs()  # so this is only called once
         if cog == 'all':  # tries on all cogs
             text = ""
@@ -129,13 +129,13 @@ class CogManagementCog(commands.Cog):
                 text += str(resp)
                 colors.add(resp.color)
             if len(text) and len(colors):
-                if   discord.Color.red() in colors:     color = discord.Color.red()
-                elif discord.Color.yellow() in colors:  color = discord.Color.yellow()
-                elif discord.Color.green() in colors:   color = discord.Color.green()
-                else:                                   color = discord.Color.blue()
+                if   disnake.Color.red() in colors:     color = disnake.Color.red()
+                elif disnake.Color.yellow() in colors:  color = disnake.Color.yellow()
+                elif disnake.Color.green() in colors:   color = disnake.Color.green()
+                else:                                   color = disnake.Color.blue()
                 print(repr(resp))
                 await i.response.send_message(
-                    embed=discord.Embed(
+                    embed=disnake.Embed(
                         description=text,
                         color=color
                     ), ephemeral=True)
@@ -157,7 +157,7 @@ class CogManagementCog(commands.Cog):
 
 
     @app_commands.autocomplete()
-    async def do_cog_autocomplete(self, interaction: discord.Interaction, current: str) -> typing.List[app_commands.Choice[str]]:
+    async def do_cog_autocomplete(self, interaction: disnake.Interaction, current: str) -> typing.List[app_commands.Choice[str]]:
         return [
             app_commands.Choice(name=cog, value=cog)
             for cog in get_possible_cogs()
@@ -168,21 +168,21 @@ class CogManagementCog(commands.Cog):
 
     @__cog_modification_command_group.command(name="load",    description="Loads an unloaded cog. Use 'all' to reload all cogs.")
     @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_load(self, i: discord.Interaction, cog: str):
+    async def do_cog_load(self, i: disnake.Interaction, cog: str):
         await self.__do_on_cog_set(i, cog, CogAction.LOAD)
 
     @__cog_modification_command_group.command(name="unload",  description="Unloads a loaded cog. Use 'all' to reload all cogs.")
     @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_unload(self, i: discord.Interaction, cog: str):
+    async def do_cog_unload(self, i: disnake.Interaction, cog: str):
         await self.__do_on_cog_set(i, cog, CogAction.UNLOAD)
 
     @__cog_modification_command_group.command(name="reload",  description="Reloads a cog. Use 'all' to reload all cogs.")
     @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_reload(self, i: discord.Interaction, cog: str):
+    async def do_cog_reload(self, i: disnake.Interaction, cog: str):
         await self.__do_on_cog_set(i, cog, CogAction.RELOAD)
 
     @__cog_modification_command_group.command(name="list",    description="Lists all loaded and unloaded cogs.")
-    async def do_cog_list(self, i: discord.Interaction, refresh_cached_list:bool=True):
+    async def do_cog_list(self, i: disnake.Interaction, refresh_cached_list:bool=True):
         loaded = []
         unloaded = []
         cogs = get_possible_cogs(refresh=refresh_cached_list)
@@ -194,14 +194,14 @@ class CogManagementCog(commands.Cog):
         text = ""
         if len(loaded):   text += "\n**Loaded:**\n> `"   + '`\n> `'.join(loaded)   + '`\n'
         if len(unloaded): text += "\n**Unloaded:**\n> `" + '`\n> `'.join(unloaded) + '`\n'
-        await i.response.send_message(embed=discord.Embed(
+        await i.response.send_message(embed=disnake.Embed(
             description=text if len(text) else "\n🚫 **No cogs found!**\n",
-            color=discord.Color.green() if len(text) else discord.color.red()
+            color=disnake.Color.green() if len(text) else disnake.color.red()
         ), ephemeral=True)
 
 
     @__cog_modification_command_group.command(name="sync",    description="Re-sync the bot application commands.")
-    async def do_cog_sync(self, i: discord.Interaction):
+    async def do_cog_sync(self, i: disnake.Interaction):
         try:
             await i.response.defer()
             print("SYNC  Starting command sync")
