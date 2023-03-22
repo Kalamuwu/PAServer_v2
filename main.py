@@ -1,28 +1,27 @@
 print("Starting server...\n")
 
 import dotenv
+
 dotenv.load_dotenv(".env")
 
+import asyncio
+import enum
 import os
 import sys
-import asyncio
-import typing
 import traceback
-import enum
+import typing
 from datetime import datetime
 
-import discord
-from discord import app_commands
-from discord.ext import commands
-
+import disnake
+from disnake import app_commands
+from disnake.ext import commands
 from vars import author_id
 
-
-intents = discord.Intents.all()
+intents = disnake.Intents.all()
 bot = commands.Bot(command_prefix=commands.when_mentioned,
                    help_command=None,
-                   activity=discord.Activity(
-                       type=discord.ActivityType.watching,
+                   activity=disnake.Activity(
+                       type=disnake.ActivityType.watching,
                        name="/help  |  ver0.1.0-stable"),
                    intents=intents)
 
@@ -33,6 +32,7 @@ bot.author_id = author_id
 ##
 
 from cog_management import get_possible_cogs
+
 
 @bot.event
 async def on_ready():
@@ -57,4 +57,4 @@ if __name__ == '__main__':
 
     from keep_alive import keep_alive
     keep_alive()
-    bot.run(os.environ['DISCORD_TOKEN'])
+    bot.run(os.environ['disnake_TOKEN'])

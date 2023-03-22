@@ -1,7 +1,7 @@
-import discord
-from discord import app_commands
-from discord.ext import commands
-from discord import ui
+import disnake
+from disnake import app_commands
+from disnake.ext import commands
+from disnake import ui
 
 import typing
 import uuid
@@ -33,13 +33,13 @@ pending_votes = {
 class Vote:
     global active_votes
 
-    def __init__(self, interaction: discord.Interaction, name:str, question:str, time:int):
+    def __init__(self, interaction: disnake.Interaction, name:str, question:str, time:int):
         self.name = name
         self.question = question
         self.time = time
     
     @staticmethod
-    def from_interaction(interaction:discord.Interaction):
+    def from_interaction(interaction:disnake.Interaction):
         pass
 
 class VoteCog(commands.Cog):
@@ -47,9 +47,9 @@ class VoteCog(commands.Cog):
         self.bot = bot
     
     @commands.Cog.listener("on_interaction")
-    async def on_interaction(self, interaction: discord.Interaction):
+    async def on_interaction(self, interaction: disnake.Interaction):
         global active_votes, pending_votes
-        if interaction.type == discord.InteractionType.modal_submit:
+        if interaction.type == disnake.InteractionType.modal_submit:
             if interaction.data['custom_id'][0:4] == "vote":
 
                 if interaction.data['custom_id'][5:9] == "meta":
@@ -62,10 +62,10 @@ class VoteCog(commands.Cog):
                     # generate unique vote id
                     uid = uuid.uuid4().hex
                     # make embed
-                    embed = discord.Embed(
+                    embed = disnake.Embed(
                         title="Configuring Vote",
                         description="I received the following metadata:\n",
-                        color=discord.Color.blue()
+                        color=disnake.Color.blue()
                     )
                     embed.add_field(name="Title",    value=title)
                     embed.add_field(name="Question", value=question)
@@ -73,21 +73,21 @@ class VoteCog(commands.Cog):
                     embed.set_footer(text=f"Vote UUID {uid}")
                     # set up time options
                     options = [
-                        discord.SelectOption(label="Endless", value="0"),
-                        discord.SelectOption(label="10 sec",  value="10"),
-                        discord.SelectOption(label="30 sec",  value="30"),
-                        discord.SelectOption(label="2 min",   value="120"),
-                        discord.SelectOption(label="5 min",   value="300"),
-                        discord.SelectOption(label="15 min",  value="900"),
-                        discord.SelectOption(label="1 hour",  value="3600"),
+                        disnake.SelectOption(label="Endless", value="0"),
+                        disnake.SelectOption(label="10 sec",  value="10"),
+                        disnake.SelectOption(label="30 sec",  value="30"),
+                        disnake.SelectOption(label="2 min",   value="120"),
+                        disnake.SelectOption(label="5 min",   value="300"),
+                        disnake.SelectOption(label="15 min",  value="900"),
+                        disnake.SelectOption(label="1 hour",  value="3600"),
                     ]
                     if interaction.user.get_role(admin_id) or interaction.user.get_role(giveaway_id):
                         options += [  # longer timing options for admin and giveaway mods
-                            discord.SelectOption(label="1 day",  value="86400"),
-                            discord.SelectOption(label="2 days", value="172800"),
-                            discord.SelectOption(label="3 days", value="259200"),
-                            discord.SelectOption(label="5 days", value="432000"),
-                            discord.SelectOption(label="7 days", value="604800")
+                            disnake.SelectOption(label="1 day",  value="86400"),
+                            disnake.SelectOption(label="2 days", value="172800"),
+                            disnake.SelectOption(label="3 days", value="259200"),
+                            disnake.SelectOption(label="5 days", value="432000"),
+                            disnake.SelectOption(label="7 days", value="604800")
                         ]
                     # make buttons and time select menu
                     view = ui.View()
@@ -104,7 +104,7 @@ class VoteCog(commands.Cog):
                     options = [ c['components'][0]['value'] for c in interaction.data['components'] ]
                     await interaction.response.send_message(f"metadata `{title}`, `{question}`, `{time}` sec\noptions `{options}`")
                 
-        elif interaction.type == discord.InteractionType.component:
+        elif interaction.type == disnake.InteractionType.component:
             if interaction.data['custom_id'][0:4] == "vote":
                 _, typ, vote_id = interaction.data['custom_id'].split('-')
                 print(pending_votes[vote_id])
@@ -113,10 +113,10 @@ class VoteCog(commands.Cog):
                 time = pending_votes[vote_id]['time']
                 past_interaction = pending_votes[vote_id]['interaction']
                 await past_interaction.edit_original_response(
-                    embed=discord.Embed(
+                    embed=disnake.Embed(
                         title="Created Vote",
                         description="You may dismiss this message now.",
-                        color=discord.Color.green()
+                        color=disnake.Color.green()
                     ), view=None)
                 # custom options - prompt modal
                 if typ == "custom":
@@ -130,7 +130,7 @@ class VoteCog(commands.Cog):
     vote_command_group = app_commands.Group(name="vote", description="Commands relating to creating and finishing votes.")
 
     @vote_command_group.command(name="create", description="Create a new vote.")
-    async def create_vote(self, interaction: discord.Interaction):
+    async def create_vote(self, interaction: disnake.Interaction):
         await interaction.response.send_modal(MetaModal())
 
 
