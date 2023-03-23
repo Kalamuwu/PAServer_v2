@@ -1,17 +1,17 @@
-import discord
-from discord import app_commands
-from discord.ext import commands
-from discord import ui
+import disnake
+
+from disnake.ext import commands
+from disnake import ui
 
 import typing
 
 class RoleSelect(ui.Select):
-    def __init__(self, custom_id:str, options:typing.List[discord.SelectOption], only_one:bool=False, allow_empty:bool=True, placeholder:str="Select"):
+    def __init__(self, custom_id:str, options:typing.List[disnake.SelectOption], only_one:bool=False, allow_empty:bool=True, placeholder:str="Select"):
         """ Initialize a new RoleSelect handler """
         custom_id = "rolemenu-" + custom_id
-        if allow_empty: options.append(discord.SelectOption(label="None", value="0"))
+        if allow_empty: options.append(disnake.SelectOption(label="None", value="0"))
         super().__init__(placeholder=placeholder, options=options, custom_id=custom_id, max_values=1 if only_one else len(options))
-    async def callback(self, interaction: discord.Interaction): pass  # handled in on_interaction below
+    async def callback(self, interaction: disnake.ApplicationCommandInteraction): pass  # handled in on_interaction below
 
 class RoleSelectCog(commands.Cog, name='RoleSelect Cog'):
     """ This cog handles role select interactions """
@@ -30,8 +30,8 @@ class RoleSelectCog(commands.Cog, name='RoleSelect Cog'):
     }
 
     @commands.Cog.listener("on_interaction")
-    async def on_interaction(self, interaction: discord.Interaction):
-        if interaction.type == discord.InteractionType.component:
+    async def on_interaction(self, interaction: disnake.ApplicationCommandInteraction):
+        if interaction.type == disnake.InteractionType.component:
             if interaction.data['custom_id'][0:9] == "rolemenu-":
                 _, label = interaction.data['custom_id'].split('-')
                 if label not in self.known_rolemenus:
@@ -54,36 +54,37 @@ class RoleSelectCog(commands.Cog, name='RoleSelect Cog'):
                         text += f"Could not find role {ri}, something has gone wrong!"
                 if text != "":
                     await interaction.response.send_message(
-                        embed=discord.Embed(
+                        embed=disnake.Embed(
                             description="\n"+text,
-                            color=discord.Color.green()
+                            color=disnake.Color.green()
                         ), ephemeral=True)
                 else:
                     await interaction.response.send_message(
-                        embed=discord.Embed(
+                        embed=disnake.Embed(
                             description="\n⚠️ No new roles to grant or revoke!\n",
-                            color=discord.Color.yellow()
+                            color=disnake.Color.yellow()
                         ), ephemeral=True)
     
 
-    @app_commands.command(name="generate-rolemenu")
-    async def make_rolemenu(self, interaction: discord.Interaction):
-        options = [
-            discord.SelectOption(label="Vent channel access", value="903681643548672020"),
-        ]
-        options2 = [
-            discord.SelectOption(label="LGBTQ :D", value="1039151271371874314")
-        ]
-        view = ui.View()
-        view.add_item(RoleSelect(options=options, custom_id="vent", only_one=True, allow_empty=True, placeholder="Vent channel access"))
-        view.add_item(RoleSelect(options=options2, custom_id="lgbt", only_one=True, allow_empty=True, placeholder="🌈❓"))
-        await interaction.channel.send(embed=discord.Embed(
-            title="Other Roles",
-            color=discord.Color.from_rgb(0, 0, 0)
-        ), view=view)
-        await interaction.response.send_message("Created rolemenu.", delete_after=5, ephemeral=True)
+    ## EXAMPLE command to create a role menu
+    # @commands.slash_command(name="generate-rolemenu")
+    # async def make_rolemenu(self, interaction: disnake.ApplicationCommandInteraction):
+    #     options = [
+    #         disnake.SelectOption(label="Vent channel access", value="903681643548672020"),
+    #     ]
+    #     options2 = [
+    #         disnake.SelectOption(label="LGBTQ :D", value="1039151271371874314")
+    #     ]
+    #     view = ui.View()
+    #     view.add_item(RoleSelect(options=options, custom_id="vent", only_one=True, allow_empty=True, placeholder="Vent channel access"))
+    #     view.add_item(RoleSelect(options=options2, custom_id="lgbt", only_one=True, allow_empty=True, placeholder="🌈❓"))
+    #     await interaction.channel.send(embed=disnake.Embed(
+    #         title="Other Roles",
+    #         color=disnake.Color.from_rgb(0, 0, 0)
+    #     ), view=view)
+    #     await interaction.response.send_message("Created rolemenu.", delete_after=5, ephemeral=True)
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(RoleSelectCog(bot))
+def setup(bot):
+    bot.add_cog(RoleSelectCog(bot))

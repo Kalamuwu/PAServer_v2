@@ -1,5 +1,4 @@
 import disnake
-from disnake import app_commands
 from disnake.ext import commands
 from disnake import ui
 
@@ -26,7 +25,7 @@ class TempCog(commands.Cog):
         self.bot = bot
     
     @commands.Cog.listener("on_interaction")
-    async def on_interaction(self, interaction: disnake.Interaction):
+    async def on_interaction(self, interaction: disnake.ApplicationCommandInteraction):
         global games, pending_votes
         if interaction.type == disnake.InteractionType.component:
             # check if user exists
@@ -74,10 +73,10 @@ class TempCog(commands.Cog):
                     ), delete_after=2, ephemeral=True)
 
     
-    game_vote_command_group = app_commands.Group(name="gamevote", description="Commands relating to ranked-choice game voting.")
+    game_vote_command_group = commands.Group(name="gamevote", description="Commands relating to ranked-choice game voting.")
 
-    @game_vote_command_group.command(name="vote", description="Rank your top 3 game choices.")
-    async def vote_for_top_3(self, i: disnake.Interaction):
+    @game_vote_command_group.slash_command(name="vote", description="Rank your top 3 game choices.")
+    async def vote_for_top_3(self, i: disnake.ApplicationCommandInteraction):
         global game_names
         view = ui.View()
         options = [ disnake.SelectOption(label=k, value=v) for k,v in game_names.items() ]
@@ -92,8 +91,8 @@ class TempCog(commands.Cog):
                 color=disnake.Color.purple()
             ), view=view, ephemeral=True)
     
-    @game_vote_command_group.command(name="check", description="Check the current voted game.")
-    async def check(self, i: disnake.Interaction):
+    @game_vote_command_group.slash_command(name="check", description="Check the current voted game.")
+    async def check(self, i: disnake.ApplicationCommandInteraction):
         global games, game_names
         await i.response.send_message(embed=disnake.Embed(
             title="Current Voting Stats",
@@ -101,8 +100,8 @@ class TempCog(commands.Cog):
             color=disnake.Color.blue()
         ))
     
-    @game_vote_command_group.command(name="reset", description="Resets the game voting scores.")
-    async def reset(self, i: disnake.Interaction):
+    @game_vote_command_group.slash_command(name="reset", description="Resets the game voting scores.")
+    async def reset(self, i: disnake.ApplicationCommandInteraction):
         global games, pending_votes
         for k in games.keys(): games[k] = 0
         pending_votes = {}
@@ -113,5 +112,5 @@ class TempCog(commands.Cog):
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(TempCog(bot))
+def setup(bot):
+    bot.add_cog(TempCog(bot))

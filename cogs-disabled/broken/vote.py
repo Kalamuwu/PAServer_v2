@@ -1,5 +1,4 @@
 import disnake
-from disnake import app_commands
 from disnake.ext import commands
 from disnake import ui
 
@@ -33,13 +32,13 @@ pending_votes = {
 class Vote:
     global active_votes
 
-    def __init__(self, interaction: disnake.Interaction, name:str, question:str, time:int):
+    def __init__(self, interaction: disnake.ApplicationCommandInteraction, name:str, question:str, time:int):
         self.name = name
         self.question = question
         self.time = time
     
     @staticmethod
-    def from_interaction(interaction:disnake.Interaction):
+    def from_interaction(interaction:disnake.ApplicationCommandInteraction):
         pass
 
 class VoteCog(commands.Cog):
@@ -47,7 +46,7 @@ class VoteCog(commands.Cog):
         self.bot = bot
     
     @commands.Cog.listener("on_interaction")
-    async def on_interaction(self, interaction: disnake.Interaction):
+    async def on_interaction(self, interaction: disnake.ApplicationCommandInteraction):
         global active_votes, pending_votes
         if interaction.type == disnake.InteractionType.modal_submit:
             if interaction.data['custom_id'][0:4] == "vote":
@@ -127,14 +126,14 @@ class VoteCog(commands.Cog):
                     del pending_votes[vote_id]
 
 
-    vote_command_group = app_commands.Group(name="vote", description="Commands relating to creating and finishing votes.")
+    vote_command_group = commands.Group(name="vote", description="Commands relating to creating and finishing votes.")
 
-    @vote_command_group.command(name="create", description="Create a new vote.")
-    async def create_vote(self, interaction: disnake.Interaction):
+    @vote_command_group.slash_command(name="create", description="Create a new vote.")
+    async def create_vote(self, interaction: disnake.ApplicationCommandInteraction):
         await interaction.response.send_modal(MetaModal())
 
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(VoteCog(bot))
+def setup(bot):
+    bot.add_cog(VoteCog(bot))

@@ -1,6 +1,6 @@
-import discord
-from discord import app_commands
-from discord.ext import commands
+import disnake
+
+from disnake.ext import commands
 import os, requests, typing
 
 from vars import author_id
@@ -11,17 +11,19 @@ class DevCog(commands.Cog, name="Developer Commands"):
     def __init__(self, bot):
         self.bot = bot
     
-    def dev_only():
-        def predicate(interaction: discord.Interaction) -> bool:
-            return interaction.user.id == 594154260271464458
-        return app_commands.check(predicate)
-    
-    def bot_author_only():
-        def predicate(interaction: discord.Interaction) -> bool:
-            return interaction.user.id == author_id
-        return app_commands.check(predicate)
+    ## TODO i dont think these are the same in disnake
+    # def dev_only():
+    #     def predicate(interaction: disnake.ApplicationCommandInteraction) -> bool:
+    #         return interaction.user.id == 594154260271464458
+    #     return commands.check(predicate)
+    # 
+    # def bot_author_only():
+    #     def predicate(interaction: disnake.ApplicationCommandInteraction) -> bool:
+    #         return interaction.user.id == author_id
+    #     return commands.check(predicate)
 
-    # @commands.command(name='pastebin', aliases=['file'])
+    ## TODO might add this back later? idk
+    # @commands.slash_command(name='pastebin', aliases=['file'])
     # async def pastebin(self, ctx, *args):
     #     args, flags = disassemble(' '.join(args))
     #     # creates a new PasteBin
@@ -43,11 +45,12 @@ class DevCog(commands.Cog, name="Developer Commands"):
     #     else:
     #         await ctx.send(res)
 
-    @app_commands.command(name="channelinfo", description="Get the current channel deve info (channel name and ID)")
-    async def get_curr_channel_id(self, i: discord.Interaction):
+    @commands.slash_command(name="channelinfo")
+    async def get_curr_channel_id(self, i: disnake.ApplicationCommandInteraction):
+        """ Get the current channel developer info (channel name and ID). """
         await i.response.send_message(f"Channel name: `{i.channel}`\nChannel id: `{i.channel_id}`", ephemeral=True)
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(DevCog(bot))
+def setup(bot):
+    bot.add_cog(DevCog(bot))

@@ -1,13 +1,13 @@
-import discord
-from discord import app_commands
-from discord.ext import commands
+import disnake
+
+from disnake.ext import commands
 
 class ModCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    def getinfo(self, user: discord.Member) -> discord.Embed:
-        embed = discord.Embed(
+    def getinfo(self, user: disnake.Member) -> disnake.Embed:
+        embed = disnake.Embed(
             title=user.display_name,
             description=f'{user.name}#{user.discriminator}',
             color=user.color)
@@ -29,15 +29,24 @@ class ModCog(commands.Cog):
         embed.set_footer(text=f"ID:  {user.id}\nis_bot  {user.bot}")
         return embed
 
-    @app_commands.command(name="whois", description="Gathers information about a specific user.")
-    async def whois(self, interaction: discord.Interaction, user: discord.Member):
+    @commands.slash_command(name="whois")
+    async def whois(self, interaction: disnake.ApplicationCommandInteraction, user: disnake.Member):
+        """
+        Gathers information about a specific user.
+
+        Parameters
+        ----------
+        user: :class:`disnake.User`
+            The user to gather information on
+        """
         await interaction.response.send_message(embed=self.getinfo(user))
 
-    @app_commands.command(name="whoami", description="Gathers information about you. Alias to running /whois on yourself.")
-    async def whoami(self, interaction: discord.Interaction):
+    @commands.slash_command(name="whoami")
+    async def whoami(self, interaction: disnake.ApplicationCommandInteraction):
+        """ Gathers information about you. Alias to running /whois on yourself. """
         await interaction.response.send_message(embed=self.getinfo(interaction.user))
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(ModCog(bot))
+def setup(bot):
+    bot.add_cog(ModCog(bot))

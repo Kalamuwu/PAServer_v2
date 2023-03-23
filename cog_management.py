@@ -1,9 +1,10 @@
 import enum
 import os
 import typing
+import os
+import enum
 
 import disnake
-from disnake import app_commands
 from disnake.ext import commands
 
 __global_cogs = []  # cog list caching
@@ -84,7 +85,7 @@ class CogManagementCog(commands.Cog):
         self.bot = bot
 
 
-    async def __do_on_single_cog(self, i: disnake.Interaction, cog: str, ac: CogAction) -> EmbedFormatter.EmbedFormat:
+    def __do_on_single_cog(self, i: disnake.ApplicationCommandInteraction, cog: str, ac: CogAction) -> EmbedFormatter.EmbedFormat:
         if cog not in get_possible_cogs():
             raise commands.ExtensionNotFound(f"The cog `{cog}` was not found!")
         
@@ -93,7 +94,7 @@ class CogManagementCog(commands.Cog):
             if cog in self.bot.extensions:
                 return EmbedFormatter.WARNING(f"`{cog}` already loaded; skipping")
             try:
-                await self.bot.load_extension(cog)
+                self.bot.load_extension(cog)
                 return EmbedFormatter.OK(f"Loaded `{cog}`")
             except commands.ExtensionError as e:
                 return EmbedFormatter.ERROR(f"`{cog}` had an error loading:", comment=f"\n> ```{e}```")
@@ -102,16 +103,16 @@ class CogManagementCog(commands.Cog):
             if cog not in self.bot.extensions:
                 return EmbedFormatter.WARNING(f"{cog} not loaded!")
             try:
-                await self.bot.unload_extension(cog)
+                self.bot.unload_extension(cog)
                 return EmbedFormatter.OK(f"Unloaded `{cog}`")
             except commands.ExtensionError as e:
                 return EmbedFormatter.ERROR(f"`{cog}` had an error loading:", comment=f"\n> ```{e}```")
         
         elif ac == CogAction.RELOAD:
             if cog in self.bot.extensions:
-                await self.bot.unload_extension(cog)
+                self.bot.unload_extension(cog)
             try:
-                await self.bot.load_extension(cog)
+                self.bot.load_extension(cog)
                 return EmbedFormatter.OK(f"Reloaded {cog}")
             except commands.ExtensionError as e:
                 return EmbedFormatter.ERROR(f"`{cog}` had an error loading:", comment=f"\n> ```{e}```")
@@ -119,13 +120,13 @@ class CogManagementCog(commands.Cog):
         else: raise ValueError(f"Unknown action `{ac}`!")
 
 
-    async def __do_on_cog_set(self, i: disnake.Interaction, cog: str, ac: CogAction) -> bool:
+    async def __do_on_cog_set(self, i: disnake.ApplicationCommandInteraction, cog: str, ac: CogAction) -> bool:
         extensions = get_possible_cogs()  # so this is only called once
         if cog == 'all':  # tries on all cogs
             text = ""
             colors = set()
             for extension in extensions:
-                resp = await self.__do_on_single_cog(i, extension, ac)
+                resp = self.__do_on_single_cog(i, extension, ac)
                 text += str(resp)
                 colors.add(resp.color)
             if len(text) and len(colors):
@@ -147,78 +148,106 @@ class CogManagementCog(commands.Cog):
         else:  # tries on single cog, passed as e.x. `dev_cogs` or `cogs.dev_cogs`
             for c in [cog, "cogs."+cog]:
                 if c in extensions:
-                    resp = await self.__do_on_single_cog(i, c, ac)
+                    resp = self.__do_on_single_cog(i, c, ac)
                     await i.response.send_message(embed=resp.to_embed(), ephemeral=True)
                     return True
-        # no cog found
-        embed = EmbedFormatter.ERROR(f"Unknown cog `{cog}`")
-        await i.response.send_message(embed=embed, ephemeral=True)
-        return False
+            # no cog found
+            embed = EmbedFormatter.ERROR(f"Unknown cog `{cog}`")
+            await i.response.send_message(embed=embed, ephemeral=True)
+            return False
+    
 
+    @staticmethod
+    async def do_cog_autocomplete(interaction: disnake.ApplicationCommandInteraction, current: str):
+        return ["all"] + [cog for cog in get_possible_cogs() if current.lower() in cog.lower()]
 
-    @app_commands.autocomplete()
-    async def do_cog_autocomplete(self, interaction: disnake.Interaction, current: str) -> typing.List[app_commands.Choice[str]]:
-        return [
-            app_commands.Choice(name=cog, value=cog)
-            for cog in get_possible_cogs()
-            if current.lower() in cog.lower()
-        ] + [app_commands.Choice(name="all", value="all")]
+    @commands.slash_command(name="cog")
+    async def __cog_modification_command_group(self, interaction: disnake.ApplicationCommandInteraction):
+        """ Commands relating to the loading, unloading, and reloading of cogs attached to the bot. """
+        pass
 
-    __cog_modification_command_group = app_commands.Group(name="cog", description="Commands relating to the loading, unloading, and reloading of cogs attached to the bot.")
+    @__cog_modification_command_group.sub_command(name="load")
+    async def do_cog_load(self, i: disnake.ApplicationCommandInteraction, cog: str = commands.Param(autocomplete=do_cog_autocomplete)):
+        """
+        Loads an unloaded cog. Use 'all' to load all cogs.
 
-    @__cog_modification_command_group.command(name="load",    description="Loads an unloaded cog. Use 'all' to reload all cogs.")
-    @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_load(self, i: disnake.Interaction, cog: str):
+        Parameters
+        ----------
+        cog: :class:`str`
+            The name of the cog to load
+        """
         await self.__do_on_cog_set(i, cog, CogAction.LOAD)
 
-    @__cog_modification_command_group.command(name="unload",  description="Unloads a loaded cog. Use 'all' to reload all cogs.")
-    @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_unload(self, i: disnake.Interaction, cog: str):
+    @__cog_modification_command_group.sub_command(name="unload")
+    async def do_cog_unload(self, i: disnake.ApplicationCommandInteraction, cog: str = commands.Param(autocomplete=do_cog_autocomplete)):
+        """
+        Unloads a loaded cog. Use 'all' to unload all cogs.
+
+        Parameters
+        ----------
+        cog: :class:`str`
+            The name of the cog to unload
+        """
         await self.__do_on_cog_set(i, cog, CogAction.UNLOAD)
 
-    @__cog_modification_command_group.command(name="reload",  description="Reloads a cog. Use 'all' to reload all cogs.")
-    @app_commands.autocomplete(cog=do_cog_autocomplete)
-    async def do_cog_reload(self, i: disnake.Interaction, cog: str):
+    @__cog_modification_command_group.sub_command(name="reload")
+    async def do_cog_reload(self, i: disnake.ApplicationCommandInteraction, cog: str = commands.Param(autocomplete=do_cog_autocomplete)):
+        """
+        Reloads a cog. Use 'all' to reload all cogs.
+
+        Parameters
+        ----------
+        cog: :class:`str`
+            The name of the cog to reload
+        """
         await self.__do_on_cog_set(i, cog, CogAction.RELOAD)
 
-    @__cog_modification_command_group.command(name="list",    description="Lists all loaded and unloaded cogs.")
-    async def do_cog_list(self, i: disnake.Interaction, refresh_cached_list:bool=True):
+    @__cog_modification_command_group.sub_command(name="list")
+    async def do_cog_list(self, i: disnake.ApplicationCommandInteraction, refresh_cached_list: bool = True):
+        """
+        Lists all loaded and unloaded cogs.
+
+        Parameters
+        ----------
+        refresh_cached_list: :class:`bool`
+            Whether or not to refresh the internally-cached list
+        """
         loaded = []
         unloaded = []
         cogs = get_possible_cogs(refresh=refresh_cached_list)
         for cog in cogs:
-            if cog in self.bot.extensions:
+            if 'cogs.'+cog in self.bot.extensions.keys():
                 loaded.append(cog)
             else:
                 unloaded.append(cog)
+        disabled = [file[:-3] for file in os.listdir('./cogs-disabled') if file.endswith(".py")]
         text = ""
         if len(loaded):   text += "\n**Loaded:**\n> `"   + '`\n> `'.join(loaded)   + '`\n'
         if len(unloaded): text += "\n**Unloaded:**\n> `" + '`\n> `'.join(unloaded) + '`\n'
+        if len(disabled): text += "\n**Disabled:**\n> `" + '`\n> `'.join(disabled) + '`\n'
         await i.response.send_message(embed=disnake.Embed(
             description=text if len(text) else "\n🚫 **No cogs found!**\n",
             color=disnake.Color.green() if len(text) else disnake.color.red()
         ), ephemeral=True)
 
-
-    @__cog_modification_command_group.command(name="sync",    description="Re-sync the bot application commands.")
-    async def do_cog_sync(self, i: disnake.Interaction):
-        try:
-            await i.response.defer()
-            print("SYNC  Starting command sync")
-            await self.bot.tree.sync()
-            print("SYNC  Finished command sync")
-        except Exception as e:
-            es = '> ' + str(e).replace('\n', '\n> ')
-            embed = EmbedFormatter.ERROR("An error occurred:", comment=es)
-            await i.followup.send(embed=embed.to_embed(), ephemeral=True)
-        else:
-            embed = EmbedFormatter.OK("Application commands synced successfully")
-            await i.followup.send(embed=embed.to_embed(), ephemeral=True)
-
-    # bot.tree.add_command(cog_modification_command_group)
-
+    ## TODO how to do in disnake?
+    # @__cog_modification_command_group.sub_command(name="sync")
+    # async def do_cog_sync(self, i: disnake.ApplicationCommandInteraction):
+    #     """ Re-sync the bot application commands. """
+    #     try:
+    #         await i.response.defer()
+    #         print("SYNC  Starting command sync")
+    #         await self.bot.tree.sync()
+    #         print("SYNC  Finished command sync")
+    #     except Exception as e:
+    #         es = '> ' + str(e).replace('\n', '\n> ')
+    #         embed = EmbedFormatter.ERROR("An error occurred:", comment=es)
+    #         await i.followup.send(embed=embed.to_embed(), ephemeral=True)
+    #     else:
+    #         embed = EmbedFormatter.OK("Application commands synced successfully")
+    #         await i.followup.send(embed=embed.to_embed(), ephemeral=True)
 
 
 # needed per cog
-async def setup(bot):
-    await bot.add_cog(CogManagementCog(bot))
+def setup(bot):
+    bot.add_cog(CogManagementCog(bot))
