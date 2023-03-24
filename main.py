@@ -1,7 +1,6 @@
 print("Starting server...\n")
 
 import dotenv
-
 dotenv.load_dotenv(".env")
 
 import asyncio
@@ -9,11 +8,11 @@ import enum
 import os
 import sys
 import traceback
-import typing
 from datetime import datetime
 
 import disnake
 from disnake.ext import commands
+import typing
 
 from vars import author_id
 

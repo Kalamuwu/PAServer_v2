@@ -1,11 +1,9 @@
 import disnake
-
 from disnake.ext import commands
 from disnake import ui
+import typing
 
 import random
-
-from typing import Literal, Tuple
 
 class GamesCog(commands.Cog):
     def __init__(self, bot):
@@ -78,7 +76,7 @@ class GamesCog(commands.Cog):
                     view.add_item(ui.Button(emoji="🫙", style=disnake.ButtonStyle.blurple, custom_id=f"tttpl-{hex(total_bits)}-{i}-{hex(px_id)}-{hex(po_id)}", row=i//3))
             return view
         @classmethod
-        def parse_bitboard(cls, bitboard:int, x_player:Player, o_player:Player) -> Tuple[disnake.Embed, ui.View]:
+        def parse_bitboard(cls, bitboard:int, x_player:Player, o_player:Player) -> typing.Tuple[disnake.Embed, ui.View]:
             """ The first 9 bytes represent the X board; the next 9 bytes represent the O board; the next bit represents who just went (1 for X, 0 for O). """
             did_x_just_go = bitboard & 1
             o_board = (bitboard & 1022) >> 1

@@ -1,7 +1,9 @@
 import disnake
-
 from disnake.ext import commands
-import os, requests, typing
+import typing
+
+import os
+import requests
 
 from vars import author_id
 

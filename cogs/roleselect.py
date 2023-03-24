@@ -1,8 +1,6 @@
 import disnake
-
 from disnake.ext import commands
 from disnake import ui
-
 import typing
 
 class RoleSelect(ui.Select):

@@ -1,6 +1,6 @@
 import disnake
-
 from disnake.ext import commands
+import typing
 
 class ModCog(commands.Cog):
     def __init__(self, bot):
