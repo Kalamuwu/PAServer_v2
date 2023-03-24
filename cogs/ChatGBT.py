@@ -7,7 +7,17 @@ class ChatGBT(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
+@commands.slash_command(name = "ChatGBT")
+async def ChatGBT(self, inter:disnake.ApplicationCommandInteraction, prompt = ""):
+    completion = openai.Completion.create(
+    engine=model_engine,
+    prompt=prompt,
+    max_tokens=1024,
+    n=1,
+    stop=None,
+    temperature=0.5,)
+    response = completion.choices[0].text
+    print(response)
 
 
 
