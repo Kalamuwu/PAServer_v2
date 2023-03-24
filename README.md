@@ -15,3 +15,8 @@ Items checked off have been pushed to features.
 [X] Cog loading/unloading
 [X] New member verification
 [X] Role menus
+[X] Clubs selection
+
+
+## Wanna Help? 
+Make a fork of the project and make a pull request 
