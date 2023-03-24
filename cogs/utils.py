@@ -5,7 +5,7 @@ import typing
 import random
 
 class UtilsCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     # @commands.slash_command(name="choice", description="Picks a choice, at random.")

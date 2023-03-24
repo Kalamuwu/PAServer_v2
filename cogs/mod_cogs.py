@@ -3,7 +3,7 @@ from disnake.ext import commands
 import typing
 
 class ModCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     def getinfo(self, user: disnake.Member) -> disnake.Embed:

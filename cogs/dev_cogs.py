@@ -10,7 +10,7 @@ from vars import author_id
 
 class DevCog(commands.Cog, name="Developer Commands"):
     """Developer and testing commands"""
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     ## TODO i dont think these are the same in disnake

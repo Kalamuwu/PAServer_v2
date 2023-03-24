@@ -56,7 +56,7 @@ class UserOTPModal(ui.Modal):
 
 class UserVerificationCog(commands.Cog, name='User Verification'):
     """ This cog handles user verification """
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
 

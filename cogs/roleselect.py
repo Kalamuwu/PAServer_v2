@@ -13,7 +13,7 @@ class RoleSelect(ui.Select):
 
 class RoleSelectCog(commands.Cog, name='RoleSelect Cog'):
     """ This cog handles role select interactions """
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
     
     known_rolemenus = {
