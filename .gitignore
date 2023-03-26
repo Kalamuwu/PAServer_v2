@@ -1,0 +1,8 @@
+# sensitive files
+/.env
+/vars-old.py
+
+# junk files, no need to track
+/Procfile
+/.vscode
+*__pycache__/
