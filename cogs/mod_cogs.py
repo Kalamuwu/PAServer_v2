@@ -32,18 +32,18 @@ class ModCog(commands.Cog):
     @commands.slash_command(name="whois")
     async def whois(self, interaction: disnake.ApplicationCommandInteraction, user: disnake.Member):
         """
-        Gathers information about a specific user.
+        Fetches information about the given user.
 
         Parameters
         ----------
         user: :class:`disnake.User`
-            The user to gather information on
+            The user to query information for.
         """
         await interaction.response.send_message(embed=self.getinfo(user))
 
     @commands.slash_command(name="whoami")
     async def whoami(self, interaction: disnake.ApplicationCommandInteraction):
-        """ Gathers information about you. Alias to running /whois on yourself. """
+        """ Fetches information about you, the user who ran the command. Alias to running /whois on yourself. """
         await interaction.response.send_message(embed=self.getinfo(interaction.user))
 
 

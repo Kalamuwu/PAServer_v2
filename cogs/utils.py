@@ -14,7 +14,7 @@ class UtilsCog(commands.Cog):
 
     @commands.slash_command(name="pick")
     async def randomizer_group(self, interaction: disnake.ApplicationCommandInteraction):
-        """ Various randomizer and choice commands """
+        """ Various randomizer and choice commands. """
         pass
 
     @randomizer_group.sub_command(name="user", description="")
@@ -24,7 +24,7 @@ class UtilsCog(commands.Cog):
         number_to_pick: int = 1
       ):
         """
-        Pick a random N users from the server (default 1 user).
+        Pick a random N users from the server (default 1). Useful for, for example, giveaways.
 
         Parameters
         ----------
