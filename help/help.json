@@ -1,0 +1,135 @@
+[
+    {
+        "type": "command",
+        "command": "help",
+        "description": "Shows help details about specific commands, or a general overview of the bot's commands.",
+        "syntax": "help [command_name]",
+        "category": "information",
+        "admin_only": false,
+        "args": [
+            {
+                "name": "command_name",
+                "description": "The name of the command to fetch a help menu for.",
+                "type": "disnake.User",
+                "optional": true
+            }
+        ]
+    },
+    {
+        "type": "command",
+        "command": "whois",
+        "description": "Fetches information about the given user.",
+        "syntax": "whois <user>",
+        "category": "information",
+        "admin_only": false,
+        "args": [
+            {
+                "name": "user",
+                "description": "The user to query information for.",
+                "type": "disnake.User",
+                "optional": false
+            }
+        ]
+    },
+    {
+        "type": "command",
+        "command": "whoami",
+        "description": "Fetches information about you, the user who ran the command. Alias to running `/whois` on yourself.",
+        "syntax": "whoami",
+        "category": "information",
+        "admin_only": false,
+        "args": []
+    },
+    {
+        "type": "group",
+        "command": "random",
+        "description": "Various randomizer and choice commands.",
+        "category": "utility",
+        "admin_only": false,
+        "subcommands": [
+            {
+                "type": "command",
+                "command": "user",
+                "description": "Pick a random N users from the server (default 1). Useful for, for example, giveaways.",
+                "syntax": "random user [number_to_pick=1]",
+                "category": "utility",
+                "args": [
+                    {
+                        "name": "number_to_pick",
+                        "description": "The number of users to randomly select. Default 1",
+                        "type": "int",
+                        "optional": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "type": "group",
+        "command": "games",
+        "description": "Various minigames!",
+        "category": "fun",
+        "admin_only": false,
+        "subcommands": [
+            {
+                "type": "group",
+                "command": "vs-player",
+                "description": "Play games against another user!",
+                "category": "fun",
+                "admin_only": false,
+                "subcommands": [
+                    {
+                        "type": "command",
+                        "command": "ttt",
+                        "description": "A simple game of tictactoe, versus another player.",
+                        "syntax": "games vs-player ttt <user>",
+                        "category": "fun",
+                        "admin_only": false,
+                        "args": [
+                            {
+                                "name": "user",
+                                "description": "The user to play against",
+                                "type": "disnake.User",
+                                "optional": false
+                            }
+                        ]
+                    },
+                    {
+                        "type": "command",
+                        "command": "rps",
+                        "description": "A simple game of rock-paper-scissors, versus another player.",
+                        "syntax": "games vs-player rps <user>",
+                        "category": "fun",
+                        "admin_only": false,
+                        "args": [
+                            {
+                                "name": "user",
+                                "description": "The user to play against",
+                                "type": "disnake.User",
+                                "optional": false
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "group",
+                "command": "vs-computer",
+                "description": "Play games against the computer!",
+                "category": "fun",
+                "admin_only": false,
+                "subcommands": [
+                    {
+                        "type": "command",
+                        "command": "rps",
+                        "description": "A simple game of rock-paper-scissors, versus the computer.",
+                        "syntax": "games vs-computer rps",
+                        "category": "fun",
+                        "admin_only": false,
+                        "args": []
+                    }
+                ]
+            }
+        ]
+    }
+]
