@@ -155,34 +155,32 @@ class HelpCog(commands.Cog, name="Help Commands"):
     
     @classmethod
     def format_help_for_command(cls, command_string: str) -> disnake.Embed:
-            """ Formats the loaded help data into a `disnake.Embed` for command `command_string`. """
-        # try:
-            *pregroups, cmd = command_string.split(" ")
-            curr_group = cls.help_data
-            while len(pregroups):
-                curr_group = cls._find_in_list(curr_group, pregroups.pop(0))
-            cmd = cls._find_in_list(curr_group, cmd)
-            embed = disnake.Embed(
+        """ Formats the loaded help data into a `disnake.Embed` for command `command_string`. """
+        *pregroups, cmd = command_string.split(" ")
+        curr_group = cls.help_data
+        for i in range(len(pregroups)):
+            curr_group = cls._find_in_list(curr_group, ' '.join(pregroups[0:i+1]))["subcommands"]
+        cmd = cls._find_in_list(curr_group, command_string)
+        fmt_arg = lambda arg: f"**Param `{arg['name']}`**\n> " + arg['description'].replace('\n', '\n> ') + ("\n> *Optional.*" if arg["optional"] else "\n> *Required.*")
+        if cmd["type"] == "command":
+            return disnake.Embed(
                 title=f"Help for command `{command_string}`",
-                description=f"**Command**\t`{cmd['command']}`\n" +
-                            f"**Description**\t{cmd['description']}\n" +
-                            f"**Syntax**\t`{cmd['syntax']}`\n\n" +
-                            f"**Category**\t*{cmd['category'].title()}*",
+                description=f"**Command**\t{cmd['command']}\n" +
+                            f"**Syntax**\t`{cmd['syntax']}`\n" +
+                            f"**Description**\t{cmd['description']}\n\n" +
+                            f"**Category**\t*{cmd['category'].title()}*\n" +
+                            ("**Admin-only** Yes\n\n" if cmd["admin_only"] else "\n") +
+                            ('\n\n'.join(fmt_arg(arg) for arg in cmd["args"])),
                 color=disnake.Color.blue())
-            if cmd["admin_only"]:
-                embed.add_field("Admin-only", "Yes")
-            for arg in cmd["args"]:
-                embed.add_field(f"Param `{arg['name']}`", value=f"{arg['description']}\n" +
-                                                                f"Optional: {'optional' if arg['optional'] else 'required'}")
-            
-            return embed
-        
-        # except Exception as e:
-        #     return disnake.Embed(
-        #             description=f"🚫 **Error loading command data! Please contact the developer!**",
-        #             color=disnake.Color.red()
-        #         )
-        #     raise e
+        else:
+            return disnake.Embed(
+                title=f"Help for group `{command_string}`",
+                description=f"**Command**\t{cmd['command']}\n" +
+                            f"**Description**\t{cmd['description']}\n\n" +
+                            f"**Category**\t*{cmd['category'].title()}*\n" +
+                            ("**Admin-only** Yes\n\n" if cmd["admin_only"] else "\n") +
+                            ('\n'.join(f"**Subcommand `{sub['command']}`**" for sub in cmd["subcommands"])),
+                color=disnake.Color.blue())
 
     @commands.slash_command(name="help")
     async def get_help_for_string(self, interaction: disnake.ApplicationCommandInteraction, command_name=commands.Param(default=None)):

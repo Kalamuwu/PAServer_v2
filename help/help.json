@@ -53,6 +53,7 @@
                 "description": "Pick a random N users from the server (default 1). Useful for, for example, giveaways.",
                 "syntax": "random user [number_to_pick=1]",
                 "category": "utility",
+                "admin_only": false,
                 "args": [
                     {
                         "name": "number_to_pick",
