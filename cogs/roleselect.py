@@ -3,13 +3,13 @@ from disnake.ext import commands
 from disnake import ui
 import typing
 
-class RoleSelect(ui.Select):
-    def __init__(self, custom_id:str, options:typing.List[disnake.SelectOption], only_one:bool=False, allow_empty:bool=True, placeholder:str="Select"):
-        """ Initialize a new RoleSelect handler """
-        custom_id = "rolemenu-" + custom_id
-        if allow_empty: options.append(disnake.SelectOption(label="None", value="0"))
-        super().__init__(placeholder=placeholder, options=options, custom_id=custom_id, max_values=1 if only_one else len(options))
-    async def callback(self, interaction: disnake.ApplicationCommandInteraction): pass  # handled in on_interaction below
+# class RoleSelect(ui.Select):
+#     def __init__(self, custom_id:str, options:typing.List[disnake.SelectOption], only_one:bool=False, allow_empty:bool=True, placeholder:str="Select"):
+#         """ Initialize a new RoleSelect handler """
+#         custom_id = "rolemenu-" + custom_id
+#         if allow_empty: options.append(disnake.SelectOption(label="None", value="0"))
+#         super().__init__(placeholder=placeholder, options=options, custom_id=custom_id, max_values=1 if only_one else len(options))
+#     async def callback(self, interaction: disnake.ApplicationCommandInteraction): pass  # handled in on_interaction below
 
 class RoleSelectCog(commands.Cog, name='RoleSelect Cog'):
     """ This cog handles role select interactions """

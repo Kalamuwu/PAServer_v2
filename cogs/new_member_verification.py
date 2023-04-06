@@ -43,12 +43,12 @@ async def send_otp(interaction: disnake.ApplicationCommandInteraction, userid:st
     return True
 
 
-class UserOTPModal(ui.Modal):
-    userid = ui.TextInput(label="6-digit student ID", custom_id="userid", placeholder="123456", min_length=6,max_length=6, required=True)
-    otp_response = ui.TextInput(label="OTP code", custom_id="otp_response", min_length=8,max_length=8, required=True)
-    def __init__(self):
-        super().__init__(title="User Verification", custom_id="verification-otp")
-
+# class UserOTPModal(ui.Modal):
+#     userid = ui.TextInput(label="6-digit student ID", custom_id="userid", placeholder="123456", min_length=6,max_length=6, required=True)
+#     otp_response = ui.TextInput(label="OTP code", custom_id="otp_response", min_length=8,max_length=8, required=True)
+#     def __init__(self):
+#         super().__init__(title="User Verification", custom_id="verification-otp")
+# 
 # class UserIDModal(ui.Modal):
 #     userid = ui.TextInput(label="6-digit student ID", custom_id="userid", placeholder="123456", min_length=6,max_length=6, required=True)
 #     def __init__(self):

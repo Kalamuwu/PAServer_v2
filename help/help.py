@@ -5,6 +5,8 @@ import typing
 
 import json
 
+from checks import dev_only
+
 class HelpCog(commands.Cog, name="Help Commands"):
     help_data = []
     help_data_flattened = {}
@@ -127,6 +129,7 @@ class HelpCog(commands.Cog, name="Help Commands"):
                 await interaction.message.edit(embed=embed, view=view)
     
     @commands.slash_command(name="reload-help")
+    @dev_only()
     async def reload_help_data(self, interaction: disnake.ApplicationCommandInteraction):
         res = self.load_command_data()
         if res["error"]:

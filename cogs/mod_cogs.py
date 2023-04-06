@@ -2,6 +2,8 @@ import disnake
 from disnake.ext import commands
 import typing
 
+from checks import admin_only
+
 class ModCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -30,6 +32,7 @@ class ModCog(commands.Cog):
         return embed
 
     @commands.slash_command(name="whois")
+    @admin_only()
     async def whois(self, interaction: disnake.ApplicationCommandInteraction, user: disnake.Member):
         """
         Fetches information about the given user.

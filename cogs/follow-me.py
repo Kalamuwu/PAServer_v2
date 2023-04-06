@@ -6,7 +6,7 @@ import os
 import requests
 
 from vars import author_id
-from checks import dev_only
+from checks import author_only
 
 
 class FollowMeCog(commands.Cog, name="FollowMe Commands"):
@@ -15,7 +15,7 @@ class FollowMeCog(commands.Cog, name="FollowMe Commands"):
         self.bot = bot
     
     @commands.slash_command(name="followme")
-    @dev_only()
+    @author_only()
     async def follow_me_group(self, i):
         """ Do what I say >:) """
         pass

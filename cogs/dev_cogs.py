@@ -13,17 +13,6 @@ class DevCog(commands.Cog, name="Developer Commands"):
     """Developer and testing commands"""
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-    
-    ## TODO i dont think these are the same in disnake
-    # def dev_only():
-    #     def predicate(interaction: disnake.ApplicationCommandInteraction) -> bool:
-    #         return interaction.user.id == 594154260271464458
-    #     return commands.check(predicate)
-    # 
-    # def bot_author_only():
-    #     def predicate(interaction: disnake.ApplicationCommandInteraction) -> bool:
-    #         return interaction.user.id == author_id
-    #     return commands.check(predicate)
 
     ## TODO might add this back later? idk
     # @commands.slash_command(name='pastebin', aliases=['file'])

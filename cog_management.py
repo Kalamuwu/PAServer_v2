@@ -1,11 +1,13 @@
+import disnake
+from disnake.ext import commands
+
 import enum
 import os
 import typing
 import os
 import enum
 
-import disnake
-from disnake.ext import commands
+from checks import dev_only
 
 __global_cogs = []  # cog list caching
 def get_possible_cogs(refresh=False) -> typing.List[str]:
@@ -162,6 +164,7 @@ class CogManagementCog(commands.Cog):
         return ["all"] + [cog for cog in get_possible_cogs() if current.lower() in cog.lower()]
 
     @commands.slash_command(name="cog")
+    @dev_only()
     async def __cog_modification_command_group(self, interaction: disnake.ApplicationCommandInteraction):
         """ Commands relating to the loading, unloading, and reloading of cogs attached to the bot. """
         pass
@@ -229,23 +232,6 @@ class CogManagementCog(commands.Cog):
             description=text if len(text) else "\n🚫 **No cogs found!**\n",
             color=disnake.Color.green() if len(text) else disnake.color.red()
         ), ephemeral=True)
-
-    ## TODO how to do in disnake?
-    # @__cog_modification_command_group.sub_command(name="sync")
-    # async def do_cog_sync(self, i: disnake.ApplicationCommandInteraction):
-    #     """ Re-sync the bot application commands. """
-    #     try:
-    #         await i.response.defer()
-    #         print("SYNC  Starting command sync")
-    #         await self.bot.tree.sync()
-    #         print("SYNC  Finished command sync")
-    #     except Exception as e:
-    #         es = '> ' + str(e).replace('\n', '\n> ')
-    #         embed = EmbedFormatter.ERROR("An error occurred:", comment=es)
-    #         await i.followup.send(embed=embed.to_embed(), ephemeral=True)
-    #     else:
-    #         embed = EmbedFormatter.OK("Application commands synced successfully")
-    #         await i.followup.send(embed=embed.to_embed(), ephemeral=True)
 
 
 # needed per cog

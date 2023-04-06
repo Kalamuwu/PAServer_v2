@@ -2,6 +2,8 @@ import disnake
 from disnake.ext import commands
 import typing
 
+from vars import author_id
+
 def author_only():
     async def predicate(ctx):
         return ctx.author.id == author_id
