@@ -27,9 +27,9 @@ class FollowMeCog(commands.Cog, name="FollowMe Commands"):
 
         Parameters
         ----------
-        string :class:`str`
+        string: :class:`str`
             This is the string the bot will say.
-        reply_id :class:`int`
+        reply_id: :class:`int`
             The message ID to reply to.
         """
         reply_message = interaction.channel.get_partial_message(reply_id)
@@ -48,7 +48,7 @@ class FollowMeCog(commands.Cog, name="FollowMe Commands"):
 
         Parameters
         ----------
-        string :class:`str`
+        string: :class:`str`
             This is the string the bot will say.
         """
         await interaction.channel.send(string)
@@ -62,9 +62,9 @@ class FollowMeCog(commands.Cog, name="FollowMe Commands"):
 
         Parameters
         ----------
-        emoji :class:`str`
+        emoji: :class:`str`
             This is the string the bot will say.
-        message_id :class:`int`
+        message_id: :class:`int`
             The message ID to reply to.
         """
         react_message = interaction.channel.get_partial_message(message_id)
