@@ -6,6 +6,7 @@ import os
 import requests
 
 from vars import author_id
+from checks import dev_only
 
 
 class DevCog(commands.Cog, name="Developer Commands"):
@@ -48,6 +49,7 @@ class DevCog(commands.Cog, name="Developer Commands"):
     #         await ctx.send(res)
 
     @commands.slash_command(name="channelinfo")
+    @dev_only()
     async def get_curr_channel_id(self, i: disnake.ApplicationCommandInteraction):
         """ Get the current channel developer info (channel name and ID). """
         await i.response.send_message(f"Channel name: `{i.channel}`\nChannel id: `{i.channel_id}`", ephemeral=True)

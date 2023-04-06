@@ -20,9 +20,9 @@ from vars import author_id
 intents = disnake.Intents.all()
 bot = commands.InteractionBot(activity=disnake.Activity(
                                   type=disnake.ActivityType.watching,
-                                  name="/help  |  ver1.0.0-release"),
+                                  name="/help  |  ver1.1.0-release"),
                               intents=intents,
-                              command_sync_flags=commands.CommandSyncFlags.none())
+                              command_sync_flags=commands.CommandSyncFlags.all())
 
 bot.author_id = author_id
 
@@ -30,18 +30,14 @@ from cog_management import get_possible_cogs
 
 @bot.event
 async def on_ready():
-    # display loaded
     print("", datetime.now().strftime('Loaded %d %b %Y %H:%M'),
           f"Username {bot.user}",
           f"User ID  {bot.user.id}",
           sep='\nAPI  ')
-    # sync commands
-    # await bot.tree.sync()
-    print("-- Bot Initialized --\n")
+    print("API  -- Bot Initialized --\n")
 
 
 if __name__ == '__main__':
-    while True: pass
     bot.load_extension("cog_management")  # load special cog_management cog
     bot.load_extension("help.help")       # load special help menu cog
     for cog in get_possible_cogs(refresh=True):
