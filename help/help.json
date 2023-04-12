@@ -42,7 +42,7 @@
     },
     {
         "type": "group",
-        "command": "random",
+        "command": "pick",
         "description": "Various randomizer and choice commands.",
         "category": "utility",
         "admin_only": false,

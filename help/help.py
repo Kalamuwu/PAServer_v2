@@ -19,6 +19,8 @@ class HelpCog(commands.Cog, name="Help Commands"):
         if not res["error"]:
             self.__class__.help_data = res["data"]["object"]
             self.__class__.help_data_flattened = res["data"]["commands"]
+        else:
+            raise commands.ExtensionError(message=f"CRIT Couldn't load help data with error {res['error']}")
             
     
     @classmethod
@@ -47,7 +49,7 @@ class HelpCog(commands.Cog, name="Help Commands"):
     @classmethod
     def generate_help_page_n(cls, page: int) -> disnake.Embed:
         embed = disnake.Embed(
-            title=f"Help - Page {page+1} of {len(cls.help_data_flattened)//10+1}",
+            title=f"Help - Page {page+1} of {len(cls.help_data_flattened)//cls.num_listings_per_page+1}",
             color=disnake.Color.blue())
         flat = list(cls.help_data_flattened.values())
         for i in range(page*cls.num_listings_per_page, min((page+1)*cls.num_listings_per_page, len(cls.help_data_flattened))):
@@ -200,8 +202,6 @@ class HelpCog(commands.Cog, name="Help Commands"):
                         color=disnake.Color.red()
                     ))
             await interaction.response.send_message(embed=self.__class__.format_help_for_command(command_name))
-                
-
 
 
 
