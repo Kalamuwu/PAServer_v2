@@ -31,7 +31,7 @@ class UtilsCog(commands.Cog):
         number_to_pick: :class:`int`
             The number of users to randomly select. Default 1
         """
-        users = random.choices(interaction.guild.members, k=n)
+        users = random.choices(interaction.guild.members, k=number_to_pick)
         await interaction.response.send_message(embed=disnake.Embed(
             description="\n".join(user.mention for user in users),
             color=disnake.Color.blue()))
