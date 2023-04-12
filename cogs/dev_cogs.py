@@ -41,7 +41,7 @@ class DevCog(commands.Cog, name="Developer Commands"):
     @dev_only()
     async def get_curr_channel_id(self, i: disnake.ApplicationCommandInteraction):
         """ Get the current channel developer info (channel name and ID). """
-        await i.response.send_message(f"Channel name: `{i.channel}`\nChannel id: `{i.channel_id}`", ephemeral=True)
+        await i.response.send_message(f"Channel name: `{i.channel}`\nChannel id: `{i.channel_id}`\nGuild id: `{i.guild_id}`", ephemeral=True)
 
 
 # needed per cog

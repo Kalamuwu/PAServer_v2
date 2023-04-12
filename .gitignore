@@ -2,6 +2,9 @@
 /.env
 /vars-old.py
 
+# storage files, will constantly be updated
+/moderation/*.json
+
 # junk files, no need to track
 /Procfile
 /.vscode

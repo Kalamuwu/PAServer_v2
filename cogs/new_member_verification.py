@@ -56,6 +56,9 @@ async def send_otp(interaction: disnake.ApplicationCommandInteraction, userid:st
 
 class UserVerificationCog(commands.Cog, name='User Verification'):
     """ This cog handles user verification """
+    
+    welcome_channel = 899440136608169984
+    
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -147,6 +150,9 @@ class UserVerificationCog(commands.Cog, name='User Verification'):
                                     description="✅ **You've been verified!**\nWelcome to the server!",
                                     color=disnake.Color.red()
                                 ), ephemeral=True)
+                            await self.bot.get_channel(self.__class__.welcome_channel).send(embed=disnake.Embed(
+                                description=f"✅ **Welcome to the server, {interaction.user.mention}!** Pick out some <#{899327899054788689}> for yourself, and make sure to set your first name and last initial; otherwise, have fun!"
+                            ))
                             active_otps.pop(i)
                         return
                 

@@ -20,7 +20,7 @@ from vars import author_id
 intents = disnake.Intents.all()
 bot = commands.InteractionBot(activity=disnake.Activity(
                                   type=disnake.ActivityType.watching,
-                                  name="/help  |  ver1.1.0-release"),
+                                  name="/help  |  ver2.0.0-dev"),
                               intents=intents,
                               command_sync_flags=commands.CommandSyncFlags.all())
 
