@@ -136,7 +136,7 @@ class ActionSet:
                 data = json.load(file)
                 return { "data": data, "error": False }
         except FileNotFoundError as fnfe:
-            with open(f"moderation/{self.typ}.json", 'r') as file:
+            with open(f"moderation/{self.typ}.json", 'w') as file:
                 file.write("[]")
                 return { "data": [], "error": False }
         except Exception as e:
