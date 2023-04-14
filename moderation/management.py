@@ -85,7 +85,7 @@ class ActionSet:
         Action.color = color
         async def dm_user(self: BaseAction, user: typing.Union[disnake.Member, ModActionUserFromId], embed: disnake.Embed):
             if isinstance(user, ModActionUserFromId):
-                user = self.bot.get_or_fetch_user(user.id)
+                user = await self.bot.get_or_fetch_user(user.id)
             if user is not None and isinstance(user, (disnake.Member, disnake.User)):
                 dmc = user.dm_channel  # try grabbing existing dm channel
                 if dmc is None:
@@ -352,7 +352,7 @@ class BansCog(commands.Cog, name="Ban Management Cog"):
         res = banAc.remove(id)
         if res is not None:
             # fetch and affect user (if in server)
-            user = self.bot.get_or_fetch_user(id)
+            user = await self.bot.get_or_fetch_user(id)
             if user is not None:
                 await user.remove_roles(interaction.guild.get_role(banAc.role_id), reason=f"User was unbanned! See alerts page for more details")
             else: user = ModActionUserFromId(id)
@@ -420,7 +420,7 @@ class BansCog(commands.Cog, name="Ban Management Cog"):
         res = muteAc.remove(id)
         if res is not None:
             # fetch and affect user (if in server)
-            user = self.bot.get_or_fetch_user(id)
+            user = await self.bot.get_or_fetch_user(id)
             if user is not None:
                 await user.remove_roles(interaction.guild.get_role(muteAc.role_id), reason=f"User was unbanned! See alerts page for more details")
             else: user = ModActionUserFromId(id)
